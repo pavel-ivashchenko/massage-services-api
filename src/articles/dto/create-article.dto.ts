@@ -1,17 +1,21 @@
 
+import { IsNotEmpty } from 'class-validator';
+
+
 export class CreateArticleDto {
+  @IsNotEmpty() title: string;
+  @IsNotEmpty() day: number;
+  @IsNotEmpty() month: string;
+  @IsNotEmpty() title_img: string;
+  @IsNotEmpty() author_img: string;
+  @IsNotEmpty() author_name: string;
+  @IsNotEmpty() content: string;
+  @IsNotEmpty() intro: string;
+  @IsNotEmpty() clipboard_link: string;
+  
   id: string;
   bg_title_1: string;
   bg_title_2: string;
-  title: string;
-  title_img: string;
-  author_name: string;
-  author_img: string;
-  day: number;
-  month: string;
-  intro: string;
-  content: string;
   watched_times: number;
   hearts: number;
-  clipboard_link: string;
 }
