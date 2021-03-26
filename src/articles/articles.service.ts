@@ -1,53 +1,46 @@
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import * as uniqid from 'uniqid';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { IArticle } from './articles.model';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { GetArticlesFilterDto } from './dto/get-articles-fitler.dto';
+import { ArticleRepository } from './article.repository';
+import { Article } from './article.entity';
+import { UpdateArticleDto, GetArticlesDto, CreateArticleDto } from './dto';
 
 
 @Injectable()
 export class ArticlesService {
   
-  private articles: IArticle[] = [];
+  constructor(
+    @InjectRepository(ArticleRepository) private articleRepository: ArticleRepository
+  ) { }
   
-  getAllArticles(): IArticle[] {
-    return this.articles;
+  getArticles(getArticlesDto: GetArticlesDto): Promise<Article[]> {
+    return this.articleRepository.getArticles(getArticlesDto);
   }
   
-  getArticlesWithFilters({search, value}: GetArticlesFilterDto): IArticle[] {
-    const articles = this.getAllArticles();
-    return articles && search ?
-      articles.filter(article => Object.keys(article).some(key => key === search && article[key] === value)) : [];
-  }
-  
-  getArticleById(id: string): IArticle {
-    const found = this.articles.find(article => article.id === id);
+  async getArticleById(id: number): Promise<Article> {
+    const found = await this.articleRepository.findOne(id);
     if (!found) {
       throw new NotFoundException(`Article with id:${id} was not found.`)
     }
     return found;
   }
   
-  createArticle(createArticleDto: Omit<CreateArticleDto, 'id'>): IArticle {
-    const newArticle = { ...createArticleDto, id: uniqid() };
-    this.articles.push(newArticle);
-    return newArticle;
+  async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
+    return this.articleRepository.createArticle(createArticleDto);
   }
   
-  deleteArticle(id: string): IArticle {
-    let found = this.getArticleById(id);
-    this.articles = this.articles.filter(article => article.id !== found?.id);
+  async deleteArticle(id: number): Promise<Article> {
+    let found = await this.getArticleById(id);
+    this.articleRepository.remove(found);
     return found;
   }
   
-  updateArticle({key, value, id}: {key: string; value: any; id: string}): IArticle {
-    const updatedArticle = this.getArticleById(id);
-    if (updatedArticle) {
-      updatedArticle[key] = value;
-    }
-    return updatedArticle;
+  async updateArticle({key, value, id}: UpdateArticleDto): Promise<Article> {
+    const articleToUpdate = await this.getArticleById(id);
+    articleToUpdate[key] = value;
+    await articleToUpdate.save();
+    return articleToUpdate;
   }
   
 }

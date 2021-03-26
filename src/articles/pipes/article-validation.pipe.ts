@@ -1,11 +1,22 @@
 
-import { ArgumentMetadata, PipeTransform } from "@nestjs/common";
+import { BadRequestException, PipeTransform } from '@nestjs/common';
 
 
-export class ArticleCreateValidationPipe implements PipeTransform {
-  transform(value: any, metadata: ArgumentMetadata) {
-    console.log('HERE WILL BE VALIDATION');
+export class ArticleValidationPipe implements PipeTransform {
+  transform(value) {
+
+    if (typeof value !== 'object' || value === null) {
+      throw new BadRequestException('Value is not of Object type.');
+    }
+    
+    if (Object.keys(value).some(key => this.isEmpty(value[key]))) {
+      throw new BadRequestException('Value must not contain empty properties.');
+    }
     
     return value;
+  }
+  
+  private isEmpty(value: unknown): boolean {
+    return value === null || value === undefined || value === '';
   }
 }

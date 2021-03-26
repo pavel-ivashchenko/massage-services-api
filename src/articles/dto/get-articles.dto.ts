@@ -3,10 +3,10 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 import { CreateArticleDto } from './create-article.dto';
 
 
-export class GetArticlesFilterDto {
+export class GetArticlesDto {
   @IsOptional()
   @IsNotEmpty()
-  search: keyof CreateArticleDto;
+  searchKey: keyof CreateArticleDto;
 
   @IsOptional()
   value: any;

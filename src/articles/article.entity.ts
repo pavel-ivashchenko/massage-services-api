@@ -11,8 +11,38 @@ export class Article extends BaseEntity {
   title: string;
   
   @Column()
-  description: string;
+  day: number;
   
   @Column()
-  status: string;
+  month: string;
+  
+  @Column()
+  title_img: string;
+  
+  @Column()
+  author_img: string;
+  
+  @Column()
+  author_name: string;
+  
+  @Column()
+  content: string;
+  
+  @Column()
+  intro: string;
+  
+  @Column()
+  clipboard_link: string;
+  
+  @Column()
+  bg_title_1: string;
+  
+  @Column()
+  bg_title_2: string;
+  
+  @Column()
+  watched_times: number;
+  
+  @Column()
+  hearts: number;
 }

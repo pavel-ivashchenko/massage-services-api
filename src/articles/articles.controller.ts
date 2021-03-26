@@ -1,12 +1,12 @@
 
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 
-import { IArticle } from './articles.model';
+import { PlainBody } from '../shared/decorators';
+
 import { ArticlesService } from './articles.service';
-
-import { CreateArticleDto } from './dto/create-article.dto';
-import { GetArticlesFilterDto } from './dto/get-articles-fitler.dto';
-import { ArticleCreateValidationPipe } from './pipes/article-validation.pipe';
+import { UpdateArticleDto, GetArticlesDto, CreateArticleDto } from './dto';
+import { ArticleValidationPipe } from './pipes/article-validation.pipe';
+import { Article } from './article.entity';
 
 
 @Controller('articles')
@@ -14,31 +14,29 @@ export class ArticlesController {
   
   constructor(private articlesService: ArticlesService) { }
   
-  @Get()
-  getArticles(@Query(ValidationPipe) filterDto: GetArticlesFilterDto): IArticle[] {
-    return Object.keys(filterDto).length ?
-      this.articlesService.getArticlesWithFilters(filterDto) :
-      this.articlesService.getAllArticles();
+  @Get('/:id')
+  getArticleById(@Param('id', ParseIntPipe) id: number): Promise<Article> {
+    return this.articlesService.getArticleById(id);
   }
   
-  @Get('/:id')
-  getArticleById(@Param('id') id: string): IArticle {
-    return this.articlesService.getArticleById(id);
+  @Get()
+  getArticles(@Query(ValidationPipe) filterDto: GetArticlesDto): Promise<Article[]> {
+    return this.articlesService.getArticles(filterDto);
   }
   
   @Post()
   @UsePipes(ValidationPipe)
-  createArticle(@Body(ArticleCreateValidationPipe) body: Omit<CreateArticleDto, 'id'>): IArticle {
+  createArticle(@PlainBody(ArticleValidationPipe) body: CreateArticleDto): Promise<Article> {
     return this.articlesService.createArticle(body);
   }
   
   @Patch()
-  updateArticle(@Body() body: {id: string, key: keyof Omit<CreateArticleDto, 'id'>, value: any}) {
+  updateArticle(@PlainBody(ArticleValidationPipe) body: UpdateArticleDto): Promise<Article> {
     return this.articlesService.updateArticle(body);
   }
   
   @Delete('/:id')
-  deleteArticle(@Param('id') id: string): IArticle {
+  deleteArticle(@Param('id') id: number): Promise<Article> {
     return this.articlesService.deleteArticle(id);
   }
   
