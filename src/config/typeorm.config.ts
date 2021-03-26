@@ -9,6 +9,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   username: 'pivas',
   password: '48884888',
   database: 'm1-db',
-  entities: [__dirname + '/../**/*.entitiy.ts'],
+  autoLoadEntities: true,
   synchronize: true
 }
