@@ -1,5 +1,7 @@
 
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthController } from './auth.controller';
@@ -9,6 +11,13 @@ import { UserRepository } from './user.repostiory';
 
 @Module({
   imports: [
+    PassportModule.register({ defalutStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: 'topSecret44',
+      signOptions: {
+        expiresIn: 3600
+      }
+    }),
     TypeOrmModule.forFeature([UserRepository])
   ],
   controllers: [
