@@ -9,12 +9,11 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UserRepository } from './user.repostiory';
 
-
 @Module({
   imports: [
     PassportModule.register({ defalutStrategy: 'jwt' }),
     JwtModule.register({
-      secret: 'topSecret44',
+      secret: 'topSecret51',
       signOptions: {
         expiresIn: 3600
       }

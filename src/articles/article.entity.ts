@@ -1,5 +1,6 @@
 
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from '@app/auth/user.entity';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 
 @Entity()
@@ -45,4 +46,7 @@ export class Article extends BaseEntity {
   
   @Column()
   hearts: number;
+  
+  @ManyToOne(type => User, user => user.articles, { eager: false })
+  user: User;
 }

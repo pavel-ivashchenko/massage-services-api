@@ -1,4 +1,5 @@
 
+import { User } from '@app/auth/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 import { Article } from './article.entity';
@@ -8,10 +9,12 @@ import { CreateArticleDto, GetArticlesDto } from './dto';
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
   
-  async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
+  async createArticle(createArticleDto: CreateArticleDto, user: User): Promise<Article> {
     let article = new Article();
     Object.keys(createArticleDto).forEach(key => article[key] = createArticleDto[key]);
+    article.user = user;
     await article.save();
+    delete article.user;
     return article;
   }
   
