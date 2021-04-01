@@ -2,6 +2,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { User } from '@app/auth/user.entity';
+
 import { ArticleRepository } from './article.repository';
 import { Article } from './article.entity';
 import { UpdateArticleDto, GetArticlesDto, CreateArticleDto } from './dto';
@@ -26,8 +28,8 @@ export class ArticlesService {
     return found;
   }
   
-  async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
-    return this.articleRepository.createArticle(createArticleDto);
+  async createArticle(createArticleDto: CreateArticleDto, user: User): Promise<Article> {
+    return this.articleRepository.createArticle(createArticleDto, user);
   }
   
   async deleteArticle(id: number): Promise<Article> {

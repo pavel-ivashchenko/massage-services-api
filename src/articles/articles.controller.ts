@@ -1,7 +1,9 @@
 
-import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
-import { PlainBody } from '../shared/decorators';
+import { GetUser, PlainBody } from '@app/shared/decorators';
+import { User } from '@app/auth/user.entity';
 
 import { ArticlesService } from './articles.service';
 import { UpdateArticleDto, GetArticlesDto, CreateArticleDto } from './dto';
@@ -10,6 +12,7 @@ import { Article } from './article.entity';
 
 
 @Controller('articles')
+@UseGuards(AuthGuard('jwt'))
 export class ArticlesController {
   
   constructor(private articlesService: ArticlesService) { }
@@ -26,8 +29,11 @@ export class ArticlesController {
   
   @Post()
   @UsePipes(ValidationPipe)
-  createArticle(@PlainBody(ArticleValidationPipe) body: CreateArticleDto): Promise<Article> {
-    return this.articlesService.createArticle(body);
+  createArticle(
+    @PlainBody(ArticleValidationPipe) body: CreateArticleDto,
+    @GetUser() user: User
+  ): Promise<Article> {
+    return this.articlesService.createArticle(body, user);
   }
   
   @Patch()
