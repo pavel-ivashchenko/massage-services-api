@@ -20,8 +20,8 @@ export class ArticlesService {
     return this.articleRepository.getArticles(getArticlesDto, user);
   }
   
-  async getArticleById(id: number): Promise<Article> {
-    const found = await this.articleRepository.findOne(id);
+  async getArticleById(id: number, user: User): Promise<Article> {
+    const found = await this.articleRepository.findOne({ where: { id, userId: user.id }});
     if (!found) {
       throw new NotFoundException(`Article with id:${id} was not found.`)
     }
@@ -32,14 +32,15 @@ export class ArticlesService {
     return this.articleRepository.createArticle(createArticleDto, user);
   }
   
-  async deleteArticle(id: number): Promise<Article> {
-    let found = await this.getArticleById(id);
-    this.articleRepository.remove(found);
-    return found;
+  async deleteArticle(id: number, user: User): Promise<void> {
+    const result = await this.articleRepository.delete({ id, userId: user.id });
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with id ${id} not found.`);
+    }
   }
   
-  async updateArticle({key, value, id}: UpdateArticleDto): Promise<Article> {
-    const articleToUpdate = await this.getArticleById(id);
+  async updateArticle({key, value, id}: UpdateArticleDto, user: User): Promise<Article> {
+    const articleToUpdate = await this.getArticleById(id, user);
     articleToUpdate[key] = value;
     await articleToUpdate.save();
     return articleToUpdate;
