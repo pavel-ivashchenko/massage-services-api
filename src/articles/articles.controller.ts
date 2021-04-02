@@ -18,13 +18,19 @@ export class ArticlesController {
   constructor(private articlesService: ArticlesService) { }
   
   @Get('/:id')
-  getArticleById(@Param('id', ParseIntPipe) id: number): Promise<Article> {
-    return this.articlesService.getArticleById(id);
+  getArticleById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User
+  ): Promise<Article> {
+    return this.articlesService.getArticleById(id, user);
   }
   
   @Get()
-  getArticles(@Query(ValidationPipe) filterDto: GetArticlesDto): Promise<Article[]> {
-    return this.articlesService.getArticles(filterDto);
+  getArticles(
+    @Query(ValidationPipe) filterDto: GetArticlesDto,
+    @GetUser() user: User
+  ): Promise<Article[]> {
+    return this.articlesService.getArticles(filterDto, user);
   }
   
   @Post()
@@ -37,13 +43,16 @@ export class ArticlesController {
   }
   
   @Patch()
-  updateArticle(@PlainBody(ArticleValidationPipe) body: UpdateArticleDto): Promise<Article> {
-    return this.articlesService.updateArticle(body);
+  updateArticle(
+    @PlainBody(ArticleValidationPipe) body: UpdateArticleDto,
+    @GetUser() user: User
+  ): Promise<Article> {
+    return this.articlesService.updateArticle(body, user);
   }
   
   @Delete('/:id')
-  deleteArticle(@Param('id') id: number): Promise<Article> {
-    return this.articlesService.deleteArticle(id);
+  deleteArticle(@Param('id') id: number, user: User): Promise<void> {
+    return this.articlesService.deleteArticle(id, user);
   }
   
 }
