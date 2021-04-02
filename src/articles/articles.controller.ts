@@ -23,8 +23,11 @@ export class ArticlesController {
   }
   
   @Get()
-  getArticles(@Query(ValidationPipe) filterDto: GetArticlesDto): Promise<Article[]> {
-    return this.articlesService.getArticles(filterDto);
+  getArticles(
+    @Query(ValidationPipe) filterDto: GetArticlesDto,
+    @GetUser() user: User
+  ): Promise<Article[]> {
+    return this.articlesService.getArticles(filterDto, user);
   }
   
   @Post()

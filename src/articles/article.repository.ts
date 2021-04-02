@@ -18,8 +18,10 @@ export class ArticleRepository extends Repository<Article> {
     return article;
   }
   
-  async getArticles({searchKey, value}: GetArticlesDto): Promise<Article[]> {
+  async getArticles({searchKey, value}: GetArticlesDto, user: User): Promise<Article[]> {
     const query = this.createQueryBuilder('article');
+    
+    query.where(`article.userId = :userId`, { userId: user.id });
     
     if (searchKey && value) {
       query.andWhere(`article.${searchKey} = :${searchKey}`, { [searchKey]: value });

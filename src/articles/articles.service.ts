@@ -16,8 +16,8 @@ export class ArticlesService {
     @InjectRepository(ArticleRepository) private articleRepository: ArticleRepository
   ) { }
   
-  getArticles(getArticlesDto: GetArticlesDto): Promise<Article[]> {
-    return this.articleRepository.getArticles(getArticlesDto);
+  getArticles(getArticlesDto: GetArticlesDto, user: User): Promise<Article[]> {
+    return this.articleRepository.getArticles(getArticlesDto, user);
   }
   
   async getArticleById(id: number): Promise<Article> {
