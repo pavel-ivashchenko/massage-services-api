@@ -4,7 +4,6 @@ import { CreateArticleDto } from './create-article.dto';
 
 
 export class GetArticlesDto {
-  @IsOptional()
   @IsNotEmpty()
   searchKey: keyof CreateArticleDto;
 

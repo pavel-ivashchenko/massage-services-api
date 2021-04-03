@@ -1,5 +1,5 @@
 
-import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Delete, Get, Logger, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { GetUser, PlainBody } from '@app/shared/decorators';
@@ -14,6 +14,7 @@ import { Article } from './article.entity';
 @Controller('articles')
 @UseGuards(AuthGuard('jwt'))
 export class ArticlesController {
+  private logger = new Logger('ArticlesController');
   
   constructor(private articlesService: ArticlesService) { }
   
@@ -30,6 +31,7 @@ export class ArticlesController {
     @Query(ValidationPipe) filterDto: GetArticlesDto,
     @GetUser() user: User
   ): Promise<Article[]> {
+    this.logger.verbose(`User ${user.userName} retrieving all articles. Filters: ${JSON.stringify(filterDto)}`);
     return this.articlesService.getArticles(filterDto, user);
   }
   
@@ -39,6 +41,7 @@ export class ArticlesController {
     @PlainBody(ArticleValidationPipe) body: CreateArticleDto,
     @GetUser() user: User
   ): Promise<Article> {
+    this.logger.verbose(`User ${user.userName} creating an article. Body: ${JSON.stringify(body)}`);
     return this.articlesService.createArticle(body, user);
   }
   
